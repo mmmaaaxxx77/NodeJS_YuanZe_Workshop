@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+    db:
+      image: mariadb
+      environment:
+                - MYSQL_DATABASE=yzdemo
+                - MYSQL_USER=yzdemo
+                - MYSQL_PASSWORD=yzdemo_password
+                - MYSQL_ROOT_PASSWORD=root
+      volumes:
+            - ./db:/var/lib/mysql
+      ports:
+            - "33060:3306"
+    phpmyadmin:
+     image: phpmyadmin/phpmyadmin
+     environment:
+            MYSQL_USER: yzdemo
+            MYSQL_PASSWORD: yzdemo_password
+            MYSQL_ROOT_PASSWORD: root
+     ports:
+            - "8000:80"
+     links:
+            # for mysql container
+            - "db:db"
+volumes:
+    db:
+        driver: "local"
