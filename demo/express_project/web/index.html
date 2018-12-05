@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>簡易聊天室</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/cover.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <h3 class="masthead-brand">簡易聊天室</h3>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link active" href="/">Home</a>
+                </nav>
+            </div>
+        </header>
+        <main role="main" class="inner cover">
+            <div style="min-height:400px;padding-top: 10px;padding-bottom: 10px;">
+                <ul class="list-group" id="messageList">
+                </ul>
+            </div>
+            <div style="text-align: left;">
+                <div class="form-group col-md-6">
+                    <label>名稱</label>
+                    <input type="text" class="form-control form-control-sm" id="name" placeholder="請輸入名稱...">
+                </div>
+                <div class="form-group col-md-12">
+                    <label>Message</label>
+                    <input type="text" class="form-control form-control-sm" id="message" placeholder="請輸入Message...">
+                </div>
+                <div class="col-md-12">
+                    <button id="btnSend" class="btn btn-primary btn-sm">送出</button>
+                </div>
+            </div>
+        </main>
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+            </div>
+        </footer>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    // 新增訊息
+    function newMessage() {
+        var name = $("#name").val();
+        var message = $("#message").val();
+
+        // 使用PUT寫入一筆新使用者
+        // JQuery的AJAX
+        $.ajax({
+                url: "/api/message",
+                method: "PUT",
+                data: { name: name, message: message },
+            })
+            .done(function(data) {
+                console.log(data);
+                showMessages();
+                $("#message").val("");
+            })
+            .fail(function(error) {
+                console.log(error);
+                alert("送出訊息發生意外問題！");
+            });
+    }
+
+    // show messages
+    function showMessages() {
+        // 使用GET去讀取所有使用者的json
+        // JQuery的AJAX
+        $.ajax({
+                url: "/api/message",
+                method: "GET",
+                dataType: "json"
+            })
+            .done(function(data) {
+                // 先清空div
+                $("#messageList").html("");
+
+                // 建立所有使用者的html資料
+                let html = "";
+                for (indx in data) {
+                    const message = data[indx];
+                    html += "<li class='list-group-item list-group-item-secondary'>";
+                    html += message['date'] + " " + message['name'] + "> " + message['message'];
+                    html += "</li>";
+                }
+
+                // 塞入html資料
+                $("#messageList").html(html);
+            })
+            .fail(function() {
+                alert("發生意外問題！");
+            });
+    }
+
+    function keypressInBtn(e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) { //Enter keycode 
+            e.preventDefault();
+            newMessage();
+        }
+    };
+
+    // JQuery的page ready function寫法
+    $(function() {
+        $("#btnSend").bind("click", newMessage);
+        $("#message").bind("keypress", {}, keypressInBtn);
+        showMessages();
+    });
+
+    // 定時polling
+    // window.setInterval(showMessages, 3000);    
+    </script>
+</body>
+
+</html>

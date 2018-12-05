@@ -21,4 +21,5 @@ con.connect(function(err) {
     console.log("Connected!");
 });
 
+// 結束連線
 con.end();

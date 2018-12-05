@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
  * import other lib
  ***********************/
 const path = require('path');
+
+// 加入User model
 const User = require('./User');
 
 /**********************
@@ -42,16 +44,11 @@ router.route('/form')
     });
 
 // 如何回傳json, url為 /api/json
+// TODO 新增PUT method, 新增使用者功能 
 router.route('/api/user')
     .get(function(req, res) {
         const allUser = User.findAll();
         res.json(allUser);
-    })
-    .put(function(req, res){
-    	const name=req.body.name;
-    	const email=req.body.email;
-    	const newUser = User.newUser(name, email);
-    	res.json(newUser);
     });
 
 module.exports = app;

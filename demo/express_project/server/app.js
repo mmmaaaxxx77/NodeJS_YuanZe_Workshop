@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
  ***********************/
 const path = require('path');
 const User = require('./User');
+const Message = require('./Message');
 
 /**********************
  * express setting
@@ -35,6 +36,12 @@ app.use('/', router);
 /**********************
  * router
  ***********************/
+// 回傳網頁 url為根路徑
+router.route('/')
+    .get(function(req, res) {
+        res.render('index');
+    });
+
 // 回傳網頁 url為/form
 router.route('/form')
     .get(function(req, res) {
@@ -43,15 +50,22 @@ router.route('/form')
 
 // 如何回傳json, url為 /api/json
 router.route('/api/user')
-    .get(function(req, res) {
-        const allUser = User.findAll();
+    .get(async function(req, res) {
+        const allUser = await User.findAll();
         res.json(allUser);
-    })
-    .put(function(req, res){
-    	const name=req.body.name;
-    	const email=req.body.email;
-    	const newUser = User.newUser(name, email);
-    	res.json(newUser);
     });
+
+router.route('/api/message')
+    .get(async function(req, res) {
+        const messages = await Message.findLast();
+        res.json(messages);
+    })
+    .put(async function(req, res){
+        const name=req.body.name;
+        const message=req.body.message;
+
+        const result = await Message.newMessage(name, message);
+        res.json({ok:"ok"});
+    });    
 
 module.exports = app;

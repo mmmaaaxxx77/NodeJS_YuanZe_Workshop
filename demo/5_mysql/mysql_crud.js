@@ -23,18 +23,6 @@ con.connect(function(err) {
     console.log("Connected!");
 });
 
-// 建立資料function
-function createData(name, email) {
-    var addSql = 'INSERT INTO user(name,email) VALUES(?,?)';
-    var addSqlParams = [name, email];
-
-    con.query(addSql, addSqlParams, function(err, result) {
-        if (err) throw err;
-        const userId = result['insertId'];
-        console.log("new user id is " + userId);
-    });
-}
-
 // 讀取資料function
 function readData() {
     con.query("SELECT * from user", function(err, result) {
@@ -46,27 +34,27 @@ function readData() {
     });
 }
 
+// 建立資料function
+function createData(name, email) {
+    // TODO 建立 INSERT SQL, 並有兩個變數
+    var addSql = '';    
+    var addSqlParams = [name, email];
+
+    con.query(addSql, addSqlParams, function(err, result) {
+        if (err) throw err;
+        const userId = result['insertId'];
+        console.log("new user id is " + userId);
+    });
+}
+
 // 更新資料function
 function updateData(id, email) {
-    var modSql = 'UPDATE user SET email = ? WHERE id = ?';
-    var modSqlParams = [email, id];
-
-    con.query(modSql, modSqlParams, function(err, result) {
-        if (err) throw err;
-        const affectedRows = result['affectedRows'];
-        console.log('UPDATE affectedRows', affectedRows);
-    });
+    // TODO 完成更新使用者email功能, by id
 }
 
 // 刪除資料function
 function deleteData(id) {
-	var delSql = 'DELETE FROM user where id=' + id;
-
-    con.query(delSql, function(err, result) {
-        if (err) throw err;
-        const affectedRows = result['affectedRows'];
-        console.log('DELETE affectedRows', affectedRows);
-    });
+    // TODO 完成刪除使用者功能, by id
 }
 
 // 指令方式操作
